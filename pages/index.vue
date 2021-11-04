@@ -1,73 +1,42 @@
 <template>
   <div class="example">
-    <client-only>
-      <codemirror
+    <template v-if="isReady">
+      <Codemirror
         class="codemirror"
-        v-model="code"
-        :options="cmOption"
-        @cursorActivity="onCmCursorActivity"
-        @ready="onCmReady"
-        @focus="onCmFocus"
-        @blur="onCmBlur"
+        v-model:value="code"
+        :options="cmOptions"
       />
-    </client-only>
-    <pre class="pre">{{ code }}</pre>
+    </template>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'codemirror-example-nuxt',
-    data() {
-      return {
-        cmOption: {
-          tabSize: 4,
-          styleActiveLine: true,
-          lineNumbers: true,
-          line: true,
-          mode: 'text/x-vue',
-          theme: 'base16-dark'
-        },
-        code: dedent`
-          <template>
-            <main>
-              <h1>Hello World!</h1>
-              <p>{{ message }}</p>
-            </main>
-          </template>
-          <script>
-            export default {
-              data() {
-                return {
-                  message: 'Hi!'
-                }
-              }
-            }
-          ${'<\/script>'}
-          <style lang="scss">
-            @import './sass/variables';
-            main {
-              position: relative;
-            }
-          </style>
-        `
-      }
-    },
-    methods: {
-      onCmCursorActivity(codemirror) {
-        console.debug('onCmCursorActivity', codemirror)
+export default {
+  setup() {
+    const isReady = ref(false);
+    onMounted(() => {
+      isReady.value = true;
+    });
+
+    const code = ref(`function sum(a, b) {
+  return a + b;
+}`);
+
+    return {
+      code,
+      cmOptions: {
+        mode: 'text/javascript', // Language mode
+        theme: 'dracula', // Theme
+        lineNumbers: true, // Show line number
+        smartIndent: true, // Smart indent
+        indentUnit: 2, // The smart indent unit is 2 spaces in length
+        foldGutter: true, // Code folding
+        styleActiveLine: true, // Display the style of the selected row
       },
-      onCmReady(codemirror) {
-        console.debug('onCmReady', codemirror)
-      },
-      onCmFocus(codemirror) {
-        console.debug('onCmFocus', codemirror)
-      },
-      onCmBlur(codemirror) {
-        console.debug('onCmBlur', codemirror)
-      }
-    }
+      isReady
+    };
   }
+}
 </script>
 
 <style scoped>
